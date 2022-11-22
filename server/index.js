@@ -7,20 +7,25 @@ app.use(express.json());
 app.use(express.static('client/dist'));
 
 app.post('/repos', (req, res) => {
-  let data = '';
-  req.on('data', (chunk) => data += chunk);
+  let username = '';
+  req.on('data', (chunk) => username += chunk);
   req.on('end', () => {
-    console.log(github.getReposByUsername(data));
-      // .then(repos => db.save(repos))
-      // .catch(err => res.status(404).send())
-      // .then(() => callback(null))
-      // .catch(err => res.status(404).send());
+    github.getReposByUsername(username, (err, data) => {
+      if (err) {
+        res.status(404).send();
+      } else {
+        db.save(data, (err, data) => {
+          err ? res.status(404).send() : res.status(201).send();
+        });
+      }
+    });
   });
 });
 
 app.get('/repos', function (req, res) {
-  console.log('IN SERVER -> GET');
-  // This route should send back the top 25 repos
+  db.retrive((err, data) => {
+    err ? res.status(404).send() : res.status(200).send(data);
+  })
 });
 
 let port = 1128;
