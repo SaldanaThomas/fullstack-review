@@ -7,23 +7,19 @@ app.use(express.json());
 app.use(express.static('client/dist'));
 
 app.post('/repos', (req, res) => {
-  let username = '';
-  req.on('data', (chunk) => username += chunk);
-  req.on('end', () => {
-    github.getReposByUsername(username, (err, data) => {
-      if (err) {
-        res.status(404).send();
-      } else {
-        db.save(data, (err, data) => {
-          err ? res.status(404).send() : res.status(201).send();
-        });
-      }
-    });
+  github.getReposByUsername(req.body.user, (err, data) => {
+    if (err) {
+      res.status(404).send();
+    } else {
+      db.save(data, (err, data) => {
+        err ? res.status(404).send() : res.status(201).send();
+      });
+    }
   });
 });
 
 app.get('/repos', function (req, res) {
-  db.retrive((err, data) => {
+  db.retrieve((err, data) => {
     err ? res.status(404).send() : res.status(200).send(data);
   })
 });

@@ -1,26 +1,27 @@
 import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom';
-import $ from 'jquery';
+import axios from 'axios';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
 
 const App = () => {
 
   const [repos, setRepos] = useState([]);
+  const [render, setRender] = useState(false);
 
-  // useEffect(() => {
-  //   generateData();
-  // }, [repos]);
+  useEffect(() => {
+    generateData();
+  }, [render]);
 
   const search = (term) => {
-    $.post('http://localhost:1128/repos', term, () => {
-      generateData();
-    });
+    axios.post('http://localhost:1128/repos', {user: term})
+    .then(() => setRender(!render));
   }
 
   const generateData = () => {
-    $.get('http://localhost:1128/repos', (data, status) => {
-      setRepos(data);
+    axios.get('http://localhost:1128/repos')
+    .then(({data}) => {
+      setRepos(data.sort((a, b) => b.watchers - a.watchers))
     });
   }
 

@@ -17,7 +17,7 @@ module.exports = {
     });
   },
 
-  retrive: (callback) => {
+  retrieve: (callback) => {
     Repo.find({})
     .sort({'watchers': -1})
     .limit(25)

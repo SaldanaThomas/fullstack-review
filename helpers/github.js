@@ -2,7 +2,6 @@ const axios = require('axios');
 const config = require('../config.js');
 
 const getReposByUsername = (username, callback) => {
-  console.log(username);
   const options = {
     url: `https://api.github.com/users/${username}/repos`,
     headers: {
@@ -16,13 +15,12 @@ const getReposByUsername = (username, callback) => {
     const temp = [];
     data.forEach(item => {
       temp.push({
-      id: item.id,
-      username: item.owner.login,
-      repoURL: item.html_url,
-      watchers: item.watchers
+        id: item.id,
+        username: item.owner.login,
+        repoURL: item.html_url,
+        watchers: item.watchers
       });
     });
-    console.log(temp);
     return temp;
   })
   .then(data => callback(null, data))
